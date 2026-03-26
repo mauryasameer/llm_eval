@@ -30,3 +30,8 @@ accuracy_score.json
 validation_artifact.json
 reports/plots/*.png
 reports/*.html
+
+# Huggingface & Model local caching
+.cache/
+models/
+huggingface/
