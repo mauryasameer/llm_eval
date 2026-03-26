@@ -15,9 +15,15 @@ def generate_html_report(metrics_data: dict, audit_trail: list, output_filename:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_filename = f"reports/validation_report_{timestamp}.html"
 
-    # Setup Jinja2 Environment
-    template_dir = os.path.join(os.path.dirname(__file__), '../../reports/templates')
-    env = Environment(loader=FileSystemLoader(template_dir))
+    # Resolve template directory — works in repo root, HF Space, and Colab
+    _here = os.path.dirname(os.path.abspath(__file__))
+    _candidates = [
+        os.path.join(_here, '../../reports/templates'),   # repo layout: core/evaluators/ -> reports/
+        os.path.join(_here, '../../../reports/templates'), # hf_space/core/evaluators/ -> reports/
+        os.path.join(_here, 'reports/templates'),          # flat layout (unlikely)
+    ]
+    template_dir = next((p for p in _candidates if os.path.isfile(os.path.join(p, 'report_template.html'))), _candidates[0])
+    env = Environment(loader=FileSystemLoader(os.path.realpath(template_dir)))
     template = env.get_template('report_template.html')
     
     acc = metrics_data.get('accuracy', 0.0)
