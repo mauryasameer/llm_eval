@@ -1,29 +1,36 @@
 """
 scripts/download_model.py
 --------------------------
-CLI tool to download a HuggingFace model and cache it locally for offline inference.
+CLI tool to download a HuggingFace model into the local `models/` directory
+for offline inference. The `models/` folder is git-ignored so weights are
+never pushed to the repository.
 
 Automatically detects the correct backend:
-  - Apple Silicon (macOS arm64) → downloads via mlx-lm (Metal-optimized)
-  - Linux / Windows (CUDA / CPU) → downloads via HuggingFace Transformers
+  - Apple Silicon (macOS arm64) -> downloads via mlx-lm (Metal-optimized)
+  - Linux / Windows (CUDA / CPU) -> downloads via HuggingFace Transformers
 
 Usage:
-    # Download the default recommended model
-    python scripts/download_model.py
+    # See recommended models for your hardware
+    python scripts/download_model.py --list
 
-    # Download a specific model by HuggingFace ID
+    # Download a model into models/<name>/ inside this repo (default)
     python scripts/download_model.py --model mlx-community/Llama-3.2-3B-Instruct-4bit
 
-    # List recommended models without downloading
-    python scripts/download_model.py --list
+    # Use the global HuggingFace cache (~/.cache/huggingface/) instead
+    python scripts/download_model.py --model mlx-community/Llama-3.2-3B-Instruct-4bit --global
+
+    # Force a specific backend
+    python scripts/download_model.py --model Qwen/Qwen2.5-0.5B-Instruct --backend transformers
 """
 import argparse
+import os
 import platform
 import sys
 
+# ── Repo root (one level up from this script) ─────────────────────────────────
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # ── Recommended models per backend ───────────────────────────────────────────
-
 RECOMMENDED_MODELS = {
     "mlx": [
         {
@@ -73,6 +80,12 @@ def detect_backend() -> str:
     return "transformers"
 
 
+def local_model_path(model_id: str) -> str:
+    """Return the local path models/<sanitised_id>/ inside the repo."""
+    safe_name = model_id.replace("/", "--")
+    return os.path.join(_REPO_ROOT, "models", safe_name)
+
+
 def print_recommended(backend: str) -> None:
     models = RECOMMENDED_MODELS[backend]
     print(f"\n📦 Recommended models for your platform ({backend.upper()}):\n")
@@ -80,54 +93,72 @@ def print_recommended(backend: str) -> None:
         print(f"  {i}. {m['id']}")
         print(f"     Size: {m['size']}")
         print(f"     {m['description']}\n")
-    print(f"Run:  python scripts/download_model.py --model <model_id>")
+    print("Run:  python scripts/download_model.py --model <model_id>")
 
 
-def download_mlx(model_id: str) -> None:
+def download_mlx(model_id: str, use_global_cache: bool = False) -> None:
     try:
         from mlx_lm import load
     except ImportError:
         print("❌  mlx-lm not installed. Run: pip install mlx-lm", file=sys.stderr)
         sys.exit(1)
 
-    print(f"⬇️   Downloading '{model_id}' via mlx-lm...")
-    print("     (Model will be cached in ~/.cache/huggingface/)\n")
-    model, tokenizer = load(model_id)
-    print(f"\n✅  Model '{model_id}' is cached and ready for offline inference.")
-    print("    Use it in your scripts with:")
-    print(f"    from mlx_lm import load")
-    print(f"    model, tokenizer = load('{model_id}')")
+    if use_global_cache:
+        save_path = model_id
+        print(f"⬇️   Downloading '{model_id}' via mlx-lm...")
+        print("     Saving to: ~/.cache/huggingface/ (global cache)\n")
+        load(save_path)
+        print(f"\n✅  Done! Load with:")
+        print(f"    from mlx_lm import load")
+        print(f"    model, tokenizer = load('{model_id}')")
+    else:
+        save_path = local_model_path(model_id)
+        os.makedirs(save_path, exist_ok=True)
+        print(f"⬇️   Downloading '{model_id}' via mlx-lm...")
+        print(f"     Saving to: models/{model_id.replace('/', '--')}/ (git-ignored)\n")
+        load(model_id, model_path=save_path)
+        print(f"\n✅  Done! Load with:")
+        print(f"    from mlx_lm import load")
+        print(f"    model, tokenizer = load('{save_path}')")
 
 
-def download_transformers(model_id: str) -> None:
+def download_transformers(model_id: str, use_global_cache: bool = False) -> None:
     try:
         from transformers import AutoModelForCausalLM, AutoTokenizer
     except ImportError:
         print("❌  transformers not installed. Run: pip install transformers", file=sys.stderr)
         sys.exit(1)
 
-    print(f"⬇️   Downloading '{model_id}' via HuggingFace Transformers...")
-    print("     (Model will be cached in ~/.cache/huggingface/)\n")
-    AutoTokenizer.from_pretrained(model_id)
-    AutoModelForCausalLM.from_pretrained(model_id)
-    print(f"\n✅  Model '{model_id}' is cached and ready for offline inference.")
-    print("    Use it in your scripts with:")
+    if use_global_cache:
+        cache_dir = None
+        print(f"⬇️   Downloading '{model_id}' via HuggingFace Transformers...")
+        print("     Saving to: ~/.cache/huggingface/ (global cache)\n")
+    else:
+        cache_dir = local_model_path(model_id)
+        os.makedirs(cache_dir, exist_ok=True)
+        print(f"⬇️   Downloading '{model_id}' via HuggingFace Transformers...")
+        print(f"     Saving to: models/{model_id.replace('/', '--')}/ (git-ignored)\n")
+
+    AutoTokenizer.from_pretrained(model_id, cache_dir=cache_dir)
+    AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache_dir)
+
+    load_path = cache_dir if cache_dir else model_id
+    print(f"\n✅  Done! Load with:")
     print(f"    from transformers import AutoModelForCausalLM, AutoTokenizer")
-    print(f"    tokenizer = AutoTokenizer.from_pretrained('{model_id}')")
-    print(f"    model = AutoModelForCausalLM.from_pretrained('{model_id}')")
+    print(f"    tokenizer = AutoTokenizer.from_pretrained('{load_path}')")
+    print(f"    model = AutoModelForCausalLM.from_pretrained('{load_path}')")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Download a HuggingFace model for local inference.",
+        description="Download a HuggingFace model into models/ (git-ignored) for offline use.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=__doc__,
     )
     parser.add_argument(
         "--model", "-m",
         type=str,
         default=None,
-        help="HuggingFace model ID to download (e.g. mlx-community/Llama-3.2-3B-Instruct-4bit)",
+        help="HuggingFace model ID (e.g. mlx-community/Llama-3.2-3B-Instruct-4bit)",
     )
     parser.add_argument(
         "--list", "-l",
@@ -135,10 +166,16 @@ def main() -> None:
         help="List recommended models for your platform and exit",
     )
     parser.add_argument(
+        "--global", "-g",
+        dest="use_global_cache",
+        action="store_true",
+        help="Save to ~/.cache/huggingface/ instead of the local models/ directory",
+    )
+    parser.add_argument(
         "--backend",
         choices=["mlx", "transformers"],
         default=None,
-        help="Force a specific download backend (default: auto-detect)",
+        help="Force a specific backend (default: auto-detect from hardware)",
     )
 
     args = parser.parse_args()
@@ -153,9 +190,9 @@ def main() -> None:
         sys.exit(0)
 
     if backend == "mlx":
-        download_mlx(args.model)
+        download_mlx(args.model, use_global_cache=args.use_global_cache)
     else:
-        download_transformers(args.model)
+        download_transformers(args.model, use_global_cache=args.use_global_cache)
 
 
 if __name__ == "__main__":
