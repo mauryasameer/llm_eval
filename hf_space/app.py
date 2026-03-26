@@ -16,8 +16,14 @@ import tempfile
 import gradio as gr
 
 # ── Make the repo root importable ─────────────────────────────────────────────
+# In the HF Space, app.py lives at root alongside core/, configs/, etc.
+# Locally (in hf_space/), we go one level up to reach the repo root.
 SPACE_DIR = os.path.dirname(os.path.abspath(__file__))
-REPO_ROOT  = os.path.dirname(SPACE_DIR)
+# Check: if core/ exists next to app.py (Space env), use current dir; else go up
+if os.path.isdir(os.path.join(SPACE_DIR, "core")):
+    REPO_ROOT = SPACE_DIR
+else:
+    REPO_ROOT = os.path.dirname(SPACE_DIR)
 sys.path.insert(0, REPO_ROOT)
 
 from core.evaluators.accuracy    import evaluate_financial_f1
