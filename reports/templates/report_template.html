@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Validation Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Modern aesthetic details */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
+    </style>
+</head>
+<body class="text-slate-800 p-8 min-h-screen bg-gradient-to-br from-slate-50 to-slate-200">
+    <div class="max-w-6xl mx-auto space-y-8 relative">
+        <div class="absolute inset-0 bg-blue-50 opacity-20 blur-3xl rounded-full z-0 h-96 w-96 transform -translate-x-32 -translate-y-32"></div>
+        <!-- Header & Executive Summary -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center glass p-8 rounded-3xl shadow-sm z-10 relative border border-white/50">
+            <div class="mb-4 md:mb-0">
+                <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">System Validation Report</h1>
+                <p class="text-slate-500 mt-2 font-medium">Generated: {{ timestamp }}</p>
+            </div>
+            <div>
+                {% if status == 'PASS' %}
+                <span class="inline-flex items-center gap-x-2 rounded-full bg-emerald-100/80 px-8 py-4 text-sm font-bold text-emerald-700 shadow-sm ring-1 ring-inset ring-emerald-600/20 backdrop-blur-md">
+                    <svg class="h-3 w-3 fill-emerald-500 animate-pulse" viewBox="0 0 6 6" aria-hidden="true"><circle cx="3" cy="3" r="3" /></svg>
+                    SYSTEM PASSED THRESHOLDS
+                </span>
+                {% else %}
+                <span class="inline-flex items-center gap-x-2 rounded-full bg-red-100/80 px-8 py-4 text-sm font-bold text-red-700 shadow-sm ring-1 ring-inset ring-red-600/20 backdrop-blur-md">
+                    <svg class="h-3 w-3 fill-red-500 animate-pulse" viewBox="0 0 6 6" aria-hidden="true"><circle cx="3" cy="3" r="3" /></svg>
+                    SYSTEM FAILED THRESHOLDS
+                </span>
+                {% endif %}
+            </div>
+        </header>
+
+        <!-- Risk Heatmap (2x2 Grid) -->
+        <section class="glass p-8 rounded-3xl shadow-sm z-10 relative">
+            <h2 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-700 to-slate-900 mb-6">Risk Heatmap</h2>
+            <div class="grid grid-cols-2 gap-6 h-72">
+                <!-- Top Left: High Accuracy / Low Safety -->
+                <div class="rounded-2xl border border-slate-200 p-6 flex flex-col justify-between transition-all duration-300 {{ 'bg-red-50 shadow-inner' if metrics.accuracy >= 0.8 and metrics.safety < 0.8 else 'bg-slate-50/50 hover:bg-slate-100/80' }}">
+                    <span class="font-bold text-slate-600 text-sm tracking-wide uppercase">High Accuracy / Low Safety</span>
+                    <span class="text-4xl opacity-50">{{ '📍' if metrics.accuracy >= 0.8 and metrics.safety < 0.8 else '' }}</span>
+                </div>
+                <!-- Top Right: High Accuracy / High Safety -->
+                <div class="rounded-2xl border border-slate-200 p-6 flex flex-col justify-between transition-all duration-300 {{ 'bg-emerald-50 shadow-inner ring-2 ring-emerald-500/20' if metrics.accuracy >= 0.8 and metrics.safety >= 0.8 else 'bg-slate-50/50 hover:bg-slate-100/80' }}">
+                    <span class="font-bold text-emerald-800 text-sm tracking-wide uppercase">High Accuracy / High Safety (Target)</span>
+                    <span class="text-4xl drop-shadow-sm">{{ '📍' if metrics.accuracy >= 0.8 and metrics.safety >= 0.8 else '' }}</span>
+                </div>
+                <!-- Bottom Left: Low Accuracy / Low Safety -->
+                <div class="rounded-2xl border border-slate-200 p-6 flex flex-col justify-between transition-all duration-300 {{ 'bg-red-100 shadow-inner ring-2 ring-red-500/20' if metrics.accuracy < 0.8 and metrics.safety < 0.8 else 'bg-slate-50/50 hover:bg-slate-100/80' }}">
+                    <span class="font-bold text-red-800 text-sm tracking-wide uppercase">Low Accuracy / Low Safety (Critical)</span>
+                    <span class="text-4xl drop-shadow-sm">{{ '📍' if metrics.accuracy < 0.8 and metrics.safety < 0.8 else '' }}</span>
+                </div>
+                <!-- Bottom Right: Low Accuracy / High Safety -->
+                <div class="rounded-2xl border border-slate-200 p-6 flex flex-col justify-between transition-all duration-300 {{ 'bg-amber-50 shadow-inner' if metrics.accuracy < 0.8 and metrics.safety >= 0.8 else 'bg-slate-50/50 hover:bg-slate-100/80' }}">
+                    <span class="font-bold text-slate-600 text-sm tracking-wide uppercase">Low Accuracy / High Safety</span>
+                    <span class="text-4xl opacity-50">{{ '📍' if metrics.accuracy < 0.8 and metrics.safety >= 0.8 else '' }}</span>
+                </div>
+            </div>
+            <div class="mt-6 flex gap-10 text-sm text-slate-600 bg-white/50 p-4 rounded-xl inline-block max-w-fit border border-slate-200">
+                <p><strong class="text-slate-900">Overall Accuracy:</strong> {{ (metrics.accuracy * 100)|round(1) }}%</p>
+                <p><strong class="text-slate-900">Overall Safety:</strong> {{ (metrics.safety * 100)|round(1) }}%</p>
+            </div>
+        </section>
+
+        <!-- Audit Trail -->
+        <section class="glass rounded-3xl shadow-sm overflow-hidden border border-white/50 z-10 relative">
+            <div class="p-8 border-b border-slate-200 bg-white/30">
+                <h2 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-700 to-slate-900">Audit Trail Table</h2>
+                <p class="text-sm text-slate-500 mt-2">Comprehensive log linking executed test queries to regulatory controls.</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50/80">
+                        <tr>
+                            <th scope="col" class="px-8 py-5 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Test Case & Category</th>
+                            <th scope="col" class="px-8 py-5 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Model Response</th>
+                            <th scope="col" class="px-8 py-5 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Score / Status</th>
+                            <th scope="col" class="px-8 py-5 text-left text-xs font-bold text-slate-500 uppercase tracking-widest">Regulatory Clause Mapping</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white/50 text-sm divide-y divide-slate-100">
+                        {% for item in audit_trail %}
+                        <tr class="hover:bg-slate-50/80 transition-colors group">
+                            <td class="px-8 py-6">
+                                <span class="font-bold text-slate-900 block mb-1">{{ item.test_name }}</span>
+                                <span class="inline-block px-2 py-1 bg-slate-100 rounded text-slate-500 text-xs font-medium">{{ item.category }}</span>
+                            </td>
+                            <td class="px-8 py-6 max-w-xs text-slate-600 font-mono text-sm">
+                                <span class="line-clamp-2" title="{{ item.response }}">{{ item.response }}</span>
+                            </td>
+                            <td class="px-8 py-6 whitespace-nowrap">
+                                {% if item.score == 'PASS' %}
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-emerald-100 text-emerald-800 ring-1 ring-inset ring-emerald-500/20">PASS</span>
+                                {% elif item.score == 'FAIL' %}
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-red-100 text-red-800 ring-1 ring-inset ring-red-500/20">FAIL</span>
+                                {% else %}
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-blue-100 text-blue-800 ring-1 ring-inset ring-blue-500/20">{{ item.score }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-8 py-6">
+                                <span class="font-bold text-indigo-700 block mb-1">{{ item.regulatory_control }}</span>
+                                <span class="text-slate-500 text-xs leading-relaxed">{{ item.regulatory_intent }}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Explainability Plot -->
+        <section class="glass p-8 rounded-3xl shadow-sm mb-12 border border-white/50 z-10 relative">
+            <h2 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-700 to-slate-900 mb-2">Explainability Auditor</h2>
+            <p class="text-sm text-slate-500 mb-6">SHAP (SHapley Additive exPlanations) visualizer for the most recent token perturbation test. Required by SR 11-7 Section 3.3 for interpretability transparency.</p>
+            <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white p-6 flex justify-center shadow-inner">
+                <img src="plots/mock_influencers.png" alt="SHAP Plot" class="max-h-[32rem] object-contain rounded drop-shadow-sm transition-transform hover:scale-[1.02] duration-300" />
+            </div>
+        </section>
+    </div>
+</body>
+</html>

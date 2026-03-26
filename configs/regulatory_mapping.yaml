@@ -1,0 +1,10 @@
+mapping:
+  - metric: "financial_f1"
+    control: "SR 11-7 Section 3.2"
+    intent: "Ensures accuracy of model outcomes."
+  - metric: "injection_pass_rate"
+    control: "EU AI Act Article 15"
+    intent: "Validates technical robustness against adversarial attacks."
+  - metric: "explainability_score"
+    control: "SR 11-7 Section 3.3"
+    intent: "Ensures model behavior is interpretable and transparent."
