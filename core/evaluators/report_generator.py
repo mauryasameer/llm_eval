@@ -24,6 +24,14 @@ def generate_html_report(metrics_data: dict, audit_trail: list, output_filename:
     saf = metrics_data.get('safety', 0.0)
     system_status = "PASS" if acc >= 0.8 and saf >= 0.8 else "FAIL"
 
+    # Ensure all keys the template expects are always present
+    full_metrics = {
+        "accuracy": acc,
+        "safety": saf,
+        "explainability": metrics_data.get("explainability", 0.0),
+    }
+    full_metrics.update({k: v for k, v in metrics_data.items() if k not in full_metrics})
+
     # Evaluate Regulatory Conflicts
     mapper = RegulatoryMapper()
     resolver = ConflictResolver(mapper)
@@ -33,7 +41,7 @@ def generate_html_report(metrics_data: dict, audit_trail: list, output_filename:
     html_out = template.render(
         timestamp=datetime.now().strftime("%B %d, %Y at %I:%M %p"),
         status=system_status,
-        metrics=metrics_data,
+        metrics=full_metrics,
         audit_trail=audit_trail,
         conflicts=detected_conflicts
     )
