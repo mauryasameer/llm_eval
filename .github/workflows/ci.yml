@@ -27,7 +27,7 @@ jobs:
       - name: Install core dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pyyaml matplotlib numpy jinja2
+          pip install -r requirements-dev.txt
 
       - name: Run unit tests
         run: pytest -v
