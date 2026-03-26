@@ -1,0 +1,54 @@
+name: Deploy to HuggingFace Space
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "hf_space/**"       # Only redeploy when Space files change
+      - "core/**"           # Or when core evaluator logic changes
+      - "configs/**"
+      - "reports/templates/**"
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  deploy:
+    name: Sync to HuggingFace Space
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Push to HuggingFace Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          # Install HuggingFace CLI
+          pip install -q huggingface_hub
+
+          # Configure git identity
+          git config --global user.email "ci@github.com"
+          git config --global user.name "GitHub Actions"
+
+          # Clone the Space repo
+          git clone https://mauryasameer:${HF_TOKEN}@huggingface.co/spaces/mauryasameer/llm-eval hf_deploy
+
+          # Copy Space files to root of the Space repo
+          cp -r hf_space/. hf_deploy/
+
+          # Also copy the core source so the Space can import it
+          cp -r core/      hf_deploy/core/
+          cp -r configs/   hf_deploy/configs/
+          cp -r reports/templates/ hf_deploy/reports/templates/ 2>/dev/null || true
+          mkdir -p hf_deploy/reports/plots
+
+          # Commit and push
+          cd hf_deploy
+          git add -A
+          git diff --cached --quiet && echo "No changes to deploy." || \
+            (git commit -m "chore: sync from GitHub $(date +'%Y-%m-%d %H:%M')" && git push)
