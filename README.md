@@ -7,7 +7,7 @@
 ## 📖 Overview
 The **llm-eval-framework** is a developer-first tool designed to bridge the gap between "experimental AI" and "regulated production." Built specifically for the high-stakes environment of Financial Services, it transforms raw LLM outputs into **Model Risk Management (MRM)** artifacts.
 
-This framework is **local-first**, optimized for **Apple Silicon (M2/M3)** via `mlx-lm`, ensuring that sensitive financial data never leaves your hardware during the validation process.
+This framework is **local-first**, optimized for **on-premise hardware environments**, ensuring that sensitive financial data never leaves your infrastructure during the validation process.
 
 ### **The Problem it Solves**
 In banking, "it works" is not a valid test result. You must prove *why* it works, *how* it fails, and *where* it sits in the regulatory landscape (**SR 11-7**, **OCC 2011-12**, **EU AI Act**). This framework automates the generation of that proof.
@@ -17,7 +17,7 @@ In banking, "it works" is not a valid test result. You must prove *why* it works
 ## 🏗️ System Architecture
 The framework follows a modular "Auditor-in-the-Loop" design:
 
-1.  **Inference Wrapper:** Standardized local inference using `mlx-lm` (Metal-optimized).
+1.  **Inference Wrapper:** Standardized local inference using hardware-accelerated libraries.
 2.  **The Registry:** A `YAML` source of truth mapping metrics to regulatory clauses.
 3.  **Evaluator Modules:**
     * **Accuracy:** Financial-F1 (Entity extraction integrity for tickers/amounts).
@@ -39,7 +39,7 @@ llm-eval-framework/
 │   │   ├── adversarial.py       # Prompt injection & Red-Teaming suite
 │   │   └── explainability.py    # SHAP/LIME wrappers for token importance
 │   ├── models/
-│   │   └── local_mlx.py         # M2-optimized inference wrapper
+│   │   └── local_model.py       # Local inference wrapper
 │   └── report_engine/
 │       └── generator.py         # Data-to-HTML/PDF compiler
 ├── data/
@@ -49,19 +49,18 @@ llm-eval-framework/
 │   ├── plots/                   # Generated SHAP/LIME visualizations
 │   └── validation_report.html   # Final Audit Artifact
 ├── main.py                      # CLI Entry Point
-└── requirements.txt             # Local-first dependencies (MLX, DeepEval, etc.)
-
+└── requirements.txt             # Local-first dependencies 
 ```
 
 ---
 
-## 🚀 Getting Started (MacBook Air M2/M3)
+## 🚀 Getting Started
 
 ### 1. Prerequisites
 
 * **Python 3.10+**
-* **Apple Silicon (M2/M3)**
-* **Antigravity IDE**
+* **Hardware Acceleration (e.g., CUDA/Metal - Optional)**
+* **Any Modern IDE**
 
 ### 2. Installation
 
@@ -76,15 +75,13 @@ source venv/bin/activate
 
 # Install Core Dependencies
 pip install mlx-lm deepeval shap jinja2 pandas matplotlib
-
 ```
 
 ### 3. Running a Validation Audit
 
 ```bash
 # Run the full validation suite (Accuracy + Adversarial)
-python main.py --eval all --model mlx-community/Llama-3.2-3B-Instruct-4bit
-
+python main.py --eval all --model <local_model_path>
 ```
 
 ---
@@ -142,5 +139,5 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## 📈 Social Support
 
-If you're using this to harden your local LLMs, tag us on LinkedIn!
+If you're using this to harden your local LLMs, tag us! 
 **#GenerativeAI #ModelRisk #SR117 #OpenSource #LocalLLM**
