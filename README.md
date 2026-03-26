@@ -77,7 +77,24 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Running a Validation Audit
+### 3. Download a Local Model
+
+Use the built-in CLI to download a model from HuggingFace and cache it locally:
+
+```bash
+# See recommended models for your platform
+python scripts/download_model.py --list
+
+# Download the default recommended model (auto-detects your hardware)
+python scripts/download_model.py --model mlx-community/Llama-3.2-3B-Instruct-4bit
+
+# Force a specific backend
+python scripts/download_model.py --model Qwen/Qwen2.5-0.5B-Instruct --backend transformers
+```
+
+> Models are cached in `~/.cache/huggingface/` and work fully offline after the first download.
+
+### 4. Running a Validation Audit
 
 ```bash
 # Run the full validation suite (Accuracy + Adversarial)
