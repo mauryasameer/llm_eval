@@ -73,8 +73,8 @@ cd llm-eval-framework
 python -m venv venv
 source venv/bin/activate
 
-# Install Core Dependencies
-pip install mlx-lm deepeval shap jinja2 pandas matplotlib
+# Install Core Dependencies (Auto-detects MLX for Mac or Transformers/Torch for CUDA)
+pip install -r requirements.txt
 ```
 
 ### 3. Running a Validation Audit
