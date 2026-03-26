@@ -103,23 +103,26 @@ def download_mlx(model_id: str, use_global_cache: bool = False) -> None:
         print("❌  mlx-lm not installed. Run: pip install mlx-lm", file=sys.stderr)
         sys.exit(1)
 
+    try:
+        from huggingface_hub import snapshot_download
+    except ImportError:
+        print("❌  huggingface_hub not installed. Run: pip install huggingface-hub", file=sys.stderr)
+        sys.exit(1)
+
+    print(f"⬇️   Downloading '{model_id}' via mlx-lm...")
+
     if use_global_cache:
-        save_path = model_id
-        print(f"⬇️   Downloading '{model_id}' via mlx-lm...")
         print("     Saving to: ~/.cache/huggingface/ (global cache)\n")
-        load(save_path)
-        print(f"\n✅  Done! Load with:")
-        print(f"    from mlx_lm import load")
-        print(f"    model, tokenizer = load('{model_id}')")
+        local_path = snapshot_download(repo_id=model_id)
     else:
         save_path = local_model_path(model_id)
         os.makedirs(save_path, exist_ok=True)
-        print(f"⬇️   Downloading '{model_id}' via mlx-lm...")
         print(f"     Saving to: models/{model_id.replace('/', '--')}/ (git-ignored)\n")
-        load(model_id, model_path=save_path)
-        print(f"\n✅  Done! Load with:")
-        print(f"    from mlx_lm import load")
-        print(f"    model, tokenizer = load('{save_path}')")
+        local_path = snapshot_download(repo_id=model_id, local_dir=save_path)
+
+    print(f"\n✅  Done! Load with:")
+    print(f"    from mlx_lm import load")
+    print(f"    model, tokenizer = load('{local_path}')")
 
 
 def download_transformers(model_id: str, use_global_cache: bool = False) -> None:
