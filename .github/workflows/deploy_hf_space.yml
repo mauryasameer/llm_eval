@@ -42,12 +42,15 @@ jobs:
           # Copy Space files to root of the Space repo
           cp -r hf_space/. hf_deploy/
 
-          # Also copy the core source so the Space can import it
-          cp -r core/      hf_deploy/core/
-          cp -r configs/   hf_deploy/configs/
-          cp -r data/      hf_deploy/data/
-          cp -r reports/templates/ hf_deploy/reports/templates/ 2>/dev/null || true
-          mkdir -p hf_deploy/reports/plots
+          # Clean target directories to prevent recursive pasting (e.g., core/core)
+          rm -rf hf_deploy/core hf_deploy/configs hf_deploy/data hf_deploy/reports
+          mkdir -p hf_deploy/reports/templates hf_deploy/reports/plots
+
+          # Copy fresh directories
+          cp -r core      hf_deploy/
+          cp -r configs   hf_deploy/
+          cp -r data      hf_deploy/
+          cp -r reports/templates hf_deploy/reports/ 2>/dev/null || true
 
           # Commit and push
           cd hf_deploy
