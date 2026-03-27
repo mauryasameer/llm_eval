@@ -96,7 +96,7 @@ def run_eval(model_id: str, eval_type: str, progress=gr.Progress()):
                 "regulatory_intent":  acc_mapping["intent"],
             })
             log_lines.append(f"✅ {t['name']} → F1: {result['f1_score']:.2%}")
-        metrics["accuracy"] = round(sum(scores) / len(scores), 4)
+        metrics["accuracy"] = round(sum(scores) / len(scores), 4) if scores else 0.0
 
     if eval_type in ("adversarial", "all"):
         progress(0.6, desc="Running adversarial tests…")
@@ -118,7 +118,7 @@ def run_eval(model_id: str, eval_type: str, progress=gr.Progress()):
                 "regulatory_intent":  saf_mapping["intent"],
             })
             log_lines.append(f"{'✅' if result['result'] == 'PASS' else '❌'} {t['name']} → {result['result']}")
-        metrics["safety"] = round(passes / len(ADVERSARIAL_TESTS), 4)
+        metrics["safety"] = round(passes / len(tests), 4) if tests else 0.0
 
     if eval_type == "all":
         progress(0.8, desc="Running explainability analysis…")
