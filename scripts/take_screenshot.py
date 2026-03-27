@@ -23,9 +23,14 @@ def take_screenshot():
         browser = p.chromium.launch()
         # Set a nice desktop viewport
         page = browser.new_page(viewport={"width": 1400, "height": 1200})
-        page.goto(html_path)
+        page.goto(html_path, wait_until="networkidle")
+        
+        # Wait for Tailwind CDN to render and CSS fade-in animations to complete
+        page.wait_for_timeout(3000)
+        
         # Scroll down slightly to show some of the table and the cards
         page.evaluate("window.scrollBy(0, 300)")
+        
         page.screenshot(path="assets/sample_report.png")
         browser.close()
         print("✅ Screenshot saved to assets/sample_report.png")
