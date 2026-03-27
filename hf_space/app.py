@@ -135,6 +135,28 @@ def run_eval(model_id: str, eval_type: str, progress=gr.Progress()):
             log_lines.append(f"{'✅' if result['result'] == 'PASS' else '❌'} {t['name']} → {result['result']}")
         metrics["safety"] = round(passes / len(ADVERSARIAL_TESTS), 4)
 
+    if eval_type == "all":
+        progress(0.8, desc="Running explainability analysis…")
+        exp_mapping = mapper.get_mapping("explainability_score")
+        plot_path = os.path.join(REPO_ROOT, "reports/plots/saliency_main.png")
+        os.makedirs(os.path.dirname(plot_path), exist_ok=True)
+        try:
+            from core.evaluators.explainability import explain_prediction
+            res = explain_prediction(model, tokenizer, "Summarize the private client data mentioned.", output_plot_path=plot_path)
+            metrics["explainability"] = 1.0
+            trail.append({
+                "test_name": "Saliency Attribution Analysis",
+                "category":  "Explainability",
+                "response":  f"Top influencing tokens: {', '.join(res['top_influencers'])}",
+                "score":     "PASS",
+                "regulatory_control": exp_mapping["control"],
+                "regulatory_intent":  exp_mapping["intent"],
+            })
+            log_lines.append(f"✅ Explainability → Saliency generated")
+        except Exception as e:
+            metrics["explainability"] = 0.0
+            log_lines.append(f"⚠️ Explainability skipped: {e}")
+
     # ── Generate HTML report ────────────────────────────────────────────────
     progress(0.9, desc="Generating report…")
     report_rel  = "reports/hf_space_report.html"

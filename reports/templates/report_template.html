@@ -230,10 +230,10 @@
                                 {{ item.category }}
                             </span>
                         </td>
-                        <td class="px-6 py-5 text-slate-600 font-mono text-xs align-top whitespace-pre-wrap break-words min-w-[300px]">
+                        <td class="px-6 py-5 text-slate-600 font-mono text-xs align-top whitespace-pre-wrap break-words max-w-2xl">
                             {{ item.response }}
                         </td>
-                        <td class="px-6 py-5 align-top">
+                        <td class="px-6 py-5 align-top whitespace-nowrap">
                             {% if item.score == 'PASS' %}
                             <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300">PASS</span>
                             {% elif item.score == 'FAIL' %}
