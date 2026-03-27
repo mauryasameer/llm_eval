@@ -25,7 +25,15 @@
                 <span class="text-3xl">🏦</span>
                 <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">LLM Compliance Validation Report</h1>
             </div>
-            <p class="text-slate-500 text-sm font-medium">SR 11-7 · EU AI Act · OCC 2011-12 &nbsp;|&nbsp; Generated: {{ timestamp }}</p>
+            {% if metadata %}
+            <div class="flex flex-wrap gap-2 text-xs font-semibold text-slate-600 mb-2">
+                <span class="bg-indigo-50 border border-indigo-100 text-indigo-700 px-2 py-1 rounded">Framework v{{ metadata.framework_version }}</span>
+                <span class="bg-blue-50 border border-blue-100 text-blue-700 px-2 py-1 rounded">Model: {{ metadata.model_evaluated }}</span>
+                <span class="bg-slate-100 border border-slate-200 px-2 py-1 rounded">Time: {{ metadata.evaluation_timestamp }}</span>
+            </div>
+            {% else %}
+            <p class="text-slate-500 text-sm font-medium">Generated: {{ timestamp }}</p>
+            {% endif %}
             <p class="text-slate-400 text-xs mt-1">This report documents AI model behaviour against financial regulatory requirements. It is intended for Model Risk Management (MRM) officers and compliance teams.</p>
         </div>
         <div class="flex-shrink-0">
@@ -231,7 +239,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-5 text-slate-600 font-mono text-xs align-top whitespace-pre-wrap break-words max-w-2xl">
-                            {{ item.response }}
+                            {{ item.response_display }}
                         </td>
                         <td class="px-6 py-5 align-top whitespace-nowrap">
                             {% if item.score == 'PASS' %}

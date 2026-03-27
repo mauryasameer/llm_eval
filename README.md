@@ -21,12 +21,19 @@ Don't want to clone the repo? Use one of these:
 ---
 
 ## 📖 Overview
-The **llm-eval-framework** is a developer-first tool designed to bridge the gap between "experimental AI" and "regulated production." Built specifically for the high-stakes environment of Financial Services, it transforms raw LLM outputs into **Model Risk Management (MRM)** artifacts.
+> "In banking, 'it works' is not a valid test result."
+
+This framework automates the Model Risk Management artifacts that regulators actually require — turning raw LLM outputs into SR 11-7 compliant evidence. Built by a practitioner who has validated LLMs at a Fortune 50 financial institution.
+
+### **Sample Report**
+*(The glass-morphic, dynamic HTML report generated after validation)*
+
+![Sample Compliance Report](assets/sample_report.png)
 
 This framework is **local-first**, optimized for **on-premise hardware environments**, ensuring that sensitive financial data never leaves your infrastructure during the validation process.
 
 ### **The Problem it Solves**
-In banking, "it works" is not a valid test result. You must prove *why* it works, *how* it fails, and *where* it sits in the regulatory landscape (**SR 11-7**, **OCC 2011-12**, **EU AI Act**). This framework automates the generation of that proof.
+You must prove *why* a model works, *how* it fails, and *where* it sits in the regulatory landscape (**SR 11-7**, **OCC 2011-12**, **EU AI Act**). This framework automates the generation of that statistical and visual proof.
 
 ---
 

@@ -7,10 +7,13 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../'))
 from core.utils.mapper import RegulatoryMapper
 from core.reporting.conflict_resolver import ConflictResolver
 
-def generate_html_report(metrics_data: dict, audit_trail: list, output_filename: str = None):
+def generate_html_report(metrics_data: dict, audit_trail: list, output_filename: str = None, report_metadata: dict = None):
     """
     Generates a TailwindCSS-styled HTML Validation report.
     """
+    if report_metadata is None:
+        report_metadata = {}
+
     if output_filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_filename = f"reports/validation_report_{timestamp}.html"
@@ -43,13 +46,30 @@ def generate_html_report(metrics_data: dict, audit_trail: list, output_filename:
     resolver = ConflictResolver(mapper)
     detected_conflicts = resolver.resolve(audit_trail)
 
+    # Embed saliency plot as base64 so the HTML is fully self-contained
+    import base64
+    saliency_plot_b64 = None
+    _plot_candidates = [
+        os.path.join(os.path.dirname(__file__), '../../reports/plots/saliency_main.png'),
+        os.path.join(os.path.dirname(__file__), '../../../reports/plots/saliency_main.png'),
+        "reports/plots/saliency_main.png",
+    ]
+    for _p in _plot_candidates:
+        _abs = os.path.realpath(_p)
+        if os.path.isfile(_abs):
+            with open(_abs, "rb") as _f:
+                saliency_plot_b64 = base64.b64encode(_f.read()).decode("utf-8")
+            break
+
     # Render Template
     html_out = template.render(
-        timestamp=datetime.now().strftime("%B %d, %Y at %I:%M %p"),
+        timestamp=report_metadata.get("evaluation_timestamp", datetime.now().strftime("%B %d, %Y at %I:%M %p")),
         status=system_status,
         metrics=full_metrics,
         audit_trail=audit_trail,
-        conflicts=detected_conflicts
+        conflicts=detected_conflicts,
+        saliency_plot_b64=saliency_plot_b64,
+        metadata=report_metadata,
     )
 
     # Save to file
