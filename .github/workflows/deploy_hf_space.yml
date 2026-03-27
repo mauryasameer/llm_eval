@@ -37,7 +37,7 @@ jobs:
           git config --global user.name "GitHub Actions"
 
           # Clone the Space repo
-          git clone https://mauryasameer:${HF_TOKEN}@huggingface.co/spaces/mauryasameer/llm-eval hf_deploy
+          git clone https://mauryasameer:${HF_TOKEN}@huggingface.co/spaces/mauryasameer/llm-eval-v2 hf_deploy
 
           # Copy Space files to root of the Space repo
           cp -r hf_space/. hf_deploy/
