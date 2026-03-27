@@ -52,8 +52,8 @@ jobs:
           cp -r data      hf_deploy/
           cp -r reports/templates hf_deploy/reports/ 2>/dev/null || true
 
-          # Commit and push
+          # Commit and push — always force a new SHA so HF rebuilds
           cd hf_deploy
           git add -A
-          git diff --cached --quiet && echo "No changes to deploy." || \
-            (git commit -m "chore: sync from GitHub $(date +'%Y-%m-%d %H:%M')" && git push)
+          git commit --allow-empty -m "chore: sync from GitHub $(date +'%Y-%m-%d %H:%M')"
+          git push
