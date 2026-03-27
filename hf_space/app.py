@@ -29,10 +29,16 @@ else:
     REPO_ROOT = os.path.dirname(SPACE_DIR)
 sys.path.insert(0, REPO_ROOT)
 
-from core.evaluators.accuracy    import evaluate_financial_f1
-from core.evaluators.adversarial import evaluate_safety
-from core.evaluators.report_generator import generate_html_report
-from core.utils.mapper import RegulatoryMapper
+try:
+    from core.evaluators.accuracy    import evaluate_financial_f1
+    from core.evaluators.adversarial import evaluate_safety
+    from core.evaluators.report_generator import generate_html_report
+    from core.utils.mapper import RegulatoryMapper
+    _IMPORTS_OK = True
+except Exception as _import_err:
+    print(f"❌ STARTUP IMPORT FAILED: {_import_err}")
+    import traceback; traceback.print_exc()
+    _IMPORTS_OK = False
 
 # ── Bundled test cases ────────────────────────────────────────────────────────
 def load_test_cases(rel_path: str) -> list[dict]:
@@ -214,4 +220,4 @@ with gr.Blocks(theme=gr.themes.Soft(), title="LLM Eval Framework") as demo:
     )
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(server_name="0.0.0.0", server_port=7860)
