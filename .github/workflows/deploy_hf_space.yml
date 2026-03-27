@@ -8,6 +8,7 @@ on:
       - "core/**"           # Or when core evaluator logic changes
       - "configs/**"
       - "reports/templates/**"
+      - "data/**"
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -44,6 +45,7 @@ jobs:
           # Also copy the core source so the Space can import it
           cp -r core/      hf_deploy/core/
           cp -r configs/   hf_deploy/configs/
+          cp -r data/      hf_deploy/data/
           cp -r reports/templates/ hf_deploy/reports/templates/ 2>/dev/null || true
           mkdir -p hf_deploy/reports/plots
 
