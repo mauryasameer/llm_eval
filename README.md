@@ -3,7 +3,7 @@
 **An opinionated, local-first auditing suite for SR 11-7 and EU AI Act Compliance.**
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mauryasameer/llm_eval/blob/main/notebooks/llm_eval_demo.ipynb)
-[![HuggingFace Space](https://img.shields.io/badge/🤗%20HuggingFace-Space-blue)](https://huggingface.co/spaces/mauryasameer/llm-eval)
+[![HuggingFace Space](https://img.shields.io/badge/🤗%20HuggingFace-Space-blue)](https://huggingface.co/spaces/mauryasameer/llm-eval-v2)
 [![CI](https://github.com/mauryasameer/llm_eval/actions/workflows/ci.yml/badge.svg)](https://github.com/mauryasameer/llm_eval/actions)
 
 ---
@@ -15,7 +15,7 @@ Don't want to clone the repo? Use one of these:
 | Option | Best for | Link |
 |---|---|---|
 | **Google Colab** | Running with a free GPU, easy sharing | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mauryasameer/llm_eval/blob/main/notebooks/llm_eval_demo.ipynb) |
-| **HuggingFace Space** | Zero-setup browser demo, HR / executive review | [![HF Space](https://img.shields.io/badge/🤗-Open%20Space-blue)](https://huggingface.co/spaces/mauryasameer/llm-eval) |
+| **HuggingFace Space** | Zero-setup browser demo, HR / executive review | [![HF Space](https://img.shields.io/badge/🤗-Open%20Space-blue)](https://huggingface.co/spaces/mauryasameer/llm-eval-v2) |
 | **Local CLI** | Production use, offline, Apple Silicon / CUDA | See [Getting Started](#-getting-started) below |
 
 ---

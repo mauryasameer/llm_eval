@@ -8,7 +8,7 @@ NOTE: redeploy 2026-03-27
 
 
 Deploy by pushing this directory to a HuggingFace Space repository:
-    https://huggingface.co/spaces/mauryasameer/llm-eval
+    https://huggingface.co/spaces/mauryasameer/llm-eval-v2
 """
 import os
 import sys

@@ -31,6 +31,10 @@ cp -r "$REPO_ROOT/data"         "$DEPLOY_DIR/"
 mkdir -p "$DEPLOY_DIR/reports/templates" "$DEPLOY_DIR/reports/plots"
 cp -r "$REPO_ROOT/reports/templates" "$DEPLOY_DIR/reports/"
 
+echo "==> Cleaning up build caches ..."
+find "$DEPLOY_DIR" -name "__pycache__" -type d -exec rm -rf {} +
+find "$DEPLOY_DIR" -name "*.pyc" -type f -delete
+
 echo "==> Committing and pushing to HuggingFace ..."
 cd "$DEPLOY_DIR"
 # Write a timestamp file so there's always a real file diff (HF ignores empty commits)
@@ -41,4 +45,4 @@ git push
 
 echo ""
 echo "✅ Done! Your HuggingFace Space will rebuild in ~60 seconds."
-echo "   Monitor: https://huggingface.co/spaces/mauryasameer/llm-eval"
+echo "   Monitor: https://huggingface.co/spaces/mauryasameer/llm-eval-v2"
