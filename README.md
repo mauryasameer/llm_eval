@@ -54,25 +54,35 @@ The framework follows a modular "Auditor-in-the-Loop" design:
 ```text
 llm-eval-framework/
 ├── configs/
-│   ├── regulatory_mapping.yaml  # Bridges Metrics -> SR 11-7 / EU AI Act
-│   └── system_prompts.yaml      # Hardened guardrails for local models
+│   ├── regulatory_mapping.yaml       # Bridges Metrics -> SR 11-7 / EU AI Act
+│   └── system_prompts.yaml           # Hardened guardrails for local models
 ├── core/
 │   ├── evaluators/
-│   │   ├── accuracy.py          # Financial-F1 & Entity extraction logic
-│   │   ├── adversarial.py       # Prompt injection & Red-Teaming suite
-│   │   └── explainability.py    # SHAP/LIME wrappers for token importance
-│   ├── models/
-│   │   └── local_model.py       # Local inference wrapper
-│   └── report_engine/
-│       └── generator.py         # Data-to-HTML/PDF compiler
+│   │   ├── accuracy.py               # Financial-F1 & Entity extraction logic
+│   │   ├── adversarial.py            # Prompt injection & Red-Teaming suite
+│   │   ├── explainability.py         # Attention-based token saliency
+│   │   └── report_generator.py       # Jinja2 HTML report compiler
+│   ├── reporting/
+│   │   └── conflict_resolver.py      # Regulatory paradox detection
+│   └── utils/
+│       └── mapper.py                 # YAML metric-to-regulation mapper
 ├── data/
-│   ├── adversarial_library/     # 50+ JSON-based jailbreak templates
-│   └── gold_standard/           # Reference datasets for finance
+│   ├── adversarial_library/          # 50+ JSON-based jailbreak templates
+│   └── gold_standard/                # Reference datasets for finance
+├── hf_space/
+│   ├── app.py                        # Gradio web UI (HuggingFace Spaces)
+│   └── requirements.txt              # Space-specific dependencies
 ├── reports/
-│   ├── plots/                   # Generated SHAP/LIME visualizations
-│   └── validation_report.html   # Final Audit Artifact
-├── main.py                      # CLI Entry Point
-└── requirements.txt             # Local-first dependencies 
+│   ├── plots/                        # Generated saliency visualizations
+│   └── templates/                    # Jinja2 HTML report template
+├── scripts/
+│   ├── download_model.py             # Hardware-aware model downloader
+│   └── push_to_hf.sh                 # HuggingFace Space deploy script
+├── tests/                            # Pytest unit test suite
+├── notebooks/                        # Google Colab demo notebooks
+├── main.py                           # CLI Entry Point
+├── requirements.txt                  # Local-first dependencies
+└── requirements-dev.txt              # Test-only dependencies
 ```
 
 ---
