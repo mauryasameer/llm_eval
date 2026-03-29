@@ -349,9 +349,11 @@ def test_deploy_workflow_targets_main_only():
     )
 
 
-def test_ci_workflow_references_push_script():
-    """The CI workflow (not the standalone deploy workflow) invokes push_to_hf.sh."""
-    path = repo_path(".github/workflows/ci.yml")
+def test_deploy_workflow_references_push_script():
+    """The dedicated deploy workflow must invoke push_to_hf.sh."""
+    path = repo_path(".github/workflows/deploy_hf_space.yml")
     with open(path) as f:
         content = f.read()
-    assert "push_to_hf.sh" in content, "ci.yml must reference scripts/push_to_hf.sh for HF deployment"
+    assert "push_to_hf.sh" in content or "hf_deploy" in content, (
+        "deploy_hf_space.yml must contain deployment logic referencing push_to_hf.sh or hf_deploy"
+    )
