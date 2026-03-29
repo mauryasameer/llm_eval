@@ -187,7 +187,7 @@ EXAMPLES = [
     ["microsoft/Phi-3-mini-4k-instruct","all"],
 ]
 
-with gr.Blocks(theme=gr.themes.Soft(), title="LLM Eval Framework") as demo:
+with gr.Blocks(title="LLM Eval Framework") as demo:
     gr.Markdown(DESCRIPTION)
 
     with gr.Row():
@@ -220,4 +220,4 @@ with gr.Blocks(theme=gr.themes.Soft(), title="LLM Eval Framework") as demo:
     )
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860)
+    demo.launch(server_name="0.0.0.0", server_port=7860, theme=gr.themes.Soft(), ssr_mode=False)
