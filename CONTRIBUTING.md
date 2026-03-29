@@ -33,10 +33,18 @@ If you are adding a completely new evaluation dimension (e.g., Bias Detection, P
 4. Update the HTML report template in `reports/templates/report_template.html` if new UI elements are needed.
 
 ### 4. Submitting a Pull Request
+
+> **Important:** Always target the `dev` branch with your PR — never `main` directly.
+> `main` is the production branch and is only updated after changes are verified on `dev`.
+> PRs opened against `main` will be redirected to `dev`.
+
 1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature/new-evaluator`).
-3. Make your changes and run the test suite: `pytest tests/`
-4. Commit your changes and push to your fork.
-5. Open a Pull Request targeting the `main` branch.
+2. Create a feature branch off `dev`: `git checkout -b feature/new-evaluator origin/dev`
+3. Make your changes and run the full test suite locally: `pytest tests/`
+4. Ensure all tests pass — CI will block the PR if they don't.
+5. Commit your changes and push to your fork.
+6. Open a Pull Request targeting the **`dev`** branch of this repository.
+
+Once reviewed and merged into `dev`, changes are batched and promoted to `main` by the maintainers.
 
 Thank you for contributing to open-source financial AI safety!
