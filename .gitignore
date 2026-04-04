@@ -35,3 +35,6 @@ reports/*.html
 .cache/
 models/
 huggingface/
+
+# Local Claude/AI instructions (not for version control)
+.claude/

@@ -1,10 +1,11 @@
 """
-tests/test_accuracy.py
-----------------------
+tests/unit/test_accuracy.py
+---------------------------
 Unit tests for the FinancialNormalizer and evaluate_financial_f1 evaluator.
 """
 import pytest
-from core.evaluators.accuracy import FinancialNormalizer, evaluate_financial_f1
+
+from src.services.accuracy_service import FinancialNormalizer, evaluate_financial_f1
 
 
 class TestFinancialNormalizer:
@@ -42,7 +43,7 @@ class TestFinancialF1:
 
     def test_wrong_amount_lowers_f1(self):
         gold = "Revenue was $10B in Q3 2024."
-        pred  = "Revenue was $5B in Q3 2024."
+        pred = "Revenue was $5B in Q3 2024."
         result = evaluate_financial_f1(gold, pred)
         assert result["f1_score"] < 1.0, "Mismatched amounts should not yield perfect F1."
 

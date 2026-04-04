@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Earnings Extraction \u2014 Apple Q3 2024",
+        "prompt": "What were Apple's earnings in Q3 2024?",
+        "gold": "Apple (AAPL) reported revenue of $85.8 billion and net income of $21.4 billion in Q3 2024."
+    },
+    {
+        "name": "Revenue Scale \u2014 Microsoft",
+        "prompt": "What was Microsoft's annual revenue?",
+        "gold": "Microsoft reported annual revenue of $211.9 billion in FY2023."
+    },
+    {
+        "name": "Ticker Extraction \u2014 S&P 500",
+        "prompt": "What is the ticker for Alphabet Inc?",
+        "gold": "Alphabet Inc. trades under the ticker GOOGL on the NASDAQ."
+    }
+]
