@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - "hf_space/**"       # Only redeploy when Space files change
-      - "core/**"           # Or when core evaluator logic changes
+      - "src/**"            # Or when core evaluator logic changes
       - "configs/**"
       - "reports/templates/**"
       - "data/**"
@@ -42,12 +42,12 @@ jobs:
           # Copy Space files to root of the Space repo
           cp -r hf_space/. hf_deploy/
 
-          # Clean target directories to prevent recursive pasting (e.g., core/core)
-          rm -rf hf_deploy/core hf_deploy/configs hf_deploy/data hf_deploy/reports
+          # Clean target directories to prevent recursive pasting (e.g., src/src)
+          rm -rf hf_deploy/src hf_deploy/configs hf_deploy/data hf_deploy/reports
           mkdir -p hf_deploy/reports/templates hf_deploy/reports/plots
 
           # Copy fresh directories
-          cp -r core      hf_deploy/
+          cp -r src       hf_deploy/
           cp -r configs   hf_deploy/
           cp -r data      hf_deploy/
           cp -r reports/templates hf_deploy/reports/ 2>/dev/null || true
