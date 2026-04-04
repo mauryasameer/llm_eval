@@ -5,6 +5,7 @@
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mauryasameer/llm_eval/blob/main/notebooks/llm_eval_demo.ipynb)
 [![HuggingFace Space](https://img.shields.io/badge/🤗%20HuggingFace-Space-blue)](https://huggingface.co/spaces/mauryasameer/llm-eval-v2)
 [![CI](https://github.com/mauryasameer/llm_eval/actions/workflows/ci.yml/badge.svg)](https://github.com/mauryasameer/llm_eval/actions)
+![Version](https://img.shields.io/badge/version-0.1.0-blue)
 
 ---
 
@@ -53,19 +54,23 @@ The framework follows a modular "Auditor-in-the-Loop" design:
 ## 📂 Project Structure
 ```text
 llm-eval-framework/
+├── src/
+│   ├── core/
+│   │   └── interfaces.py             # Abstract base classes (SaliencyProvider)
+│   ├── providers/
+│   │   ├── mlx_provider.py           # MLX (Apple Silicon) saliency backend
+│   │   └── torch_provider.py         # PyTorch / CUDA saliency backend
+│   ├── services/
+│   │   ├── accuracy_service.py       # Financial-F1 & entity extraction logic
+│   │   ├── adversarial_service.py    # Prompt injection & red-teaming suite
+│   │   ├── explainability_service.py # Attention-based token saliency
+│   │   ├── report_service.py         # Jinja2 HTML report compiler
+│   │   └── conflict_service.py       # Regulatory paradox detection
+│   └── utils/
+│       └── mapper.py                 # YAML metric-to-regulation mapper
 ├── configs/
 │   ├── regulatory_mapping.yaml       # Bridges Metrics -> SR 11-7 / EU AI Act
 │   └── system_prompts.yaml           # Hardened guardrails for local models
-├── core/
-│   ├── evaluators/
-│   │   ├── accuracy.py               # Financial-F1 & Entity extraction logic
-│   │   ├── adversarial.py            # Prompt injection & Red-Teaming suite
-│   │   ├── explainability.py         # Attention-based token saliency
-│   │   └── report_generator.py       # Jinja2 HTML report compiler
-│   ├── reporting/
-│   │   └── conflict_resolver.py      # Regulatory paradox detection
-│   └── utils/
-│       └── mapper.py                 # YAML metric-to-regulation mapper
 ├── data/
 │   ├── adversarial_library/          # 50+ JSON-based jailbreak templates
 │   └── gold_standard/                # Reference datasets for finance
@@ -78,11 +83,17 @@ llm-eval-framework/
 ├── scripts/
 │   ├── download_model.py             # Hardware-aware model downloader
 │   └── push_to_hf.sh                 # HuggingFace Space deploy script
-├── tests/                            # Pytest unit test suite
+├── tests/
+│   ├── unit/                         # One file per service/provider
+│   ├── integration/                  # End-to-end structural tests
+│   └── test_data/                    # Fixture files (JSON test data)
 ├── notebooks/                        # Google Colab demo notebooks
 ├── main.py                           # CLI Entry Point
+├── pyproject.toml                    # Ruff lint config + pytest settings
 ├── requirements.txt                  # Local-first dependencies
-└── requirements-dev.txt              # Test-only dependencies
+├── requirements-dev.txt              # Test-only dependencies (incl. ruff)
+├── VERSION                           # Current version string
+└── CHANGELOG.md                      # Keep a Changelog format
 ```
 
 ---

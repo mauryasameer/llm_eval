@@ -1,9 +1,9 @@
 """
-tests/test_mapper.py
---------------------
+tests/unit/test_mapper.py
+-------------------------
 Unit tests for the RegulatoryMapper config loader.
 """
-from core.utils.mapper import RegulatoryMapper
+from src.utils.mapper import RegulatoryMapper
 
 
 class TestRegulatoryMapper:
