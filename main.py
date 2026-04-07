@@ -149,7 +149,7 @@ def run_explainability(model, tokenizer, backend: str, mapper: RegulatoryMapper)
     plot_path = "reports/plots/saliency_main.png"
 
     try:
-        from core.evaluators.explainability import explain_prediction
+        from src.services.explainability_service import explain_prediction
         result = explain_prediction(model, tokenizer, prompt, output_plot_path=plot_path)
         top = result["top_influencers"]
         print(f"   ✅ Top Saliency Tokens: {top}")

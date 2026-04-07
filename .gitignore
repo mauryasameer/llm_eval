@@ -35,3 +35,6 @@ reports/*.html
 .cache/
 models/
 huggingface/
+
+# Runtime data (vector stores, databases, caches — never committed)
+src/data/
