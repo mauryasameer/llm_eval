@@ -36,5 +36,5 @@ reports/*.html
 models/
 huggingface/
 
-# Local Claude/AI instructions (not for version control)
-.claude/
+# Runtime data (vector stores, databases, caches — never committed)
+src/data/

@@ -102,7 +102,7 @@ llm-eval-framework/
 
 ### 1. Prerequisites
 
-* **Python 3.10+**
+* **Python 3.11+**
 * **Hardware Acceleration (e.g., CUDA/Metal - Optional)**
 * **Any Modern IDE**
 
