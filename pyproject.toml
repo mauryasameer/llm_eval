@@ -1,0 +1,32 @@
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+exclude = ["notebooks/"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade — modernise Python syntax
+    "B",    # bugbear — common bug patterns
+    "PIE",  # miscellaneous improvements
+    "PLC",  # pylint convention
+]
+ignore = [
+    "E501",   # long lines — intentional in prompt strings
+    "B008",   # function call in default argument
+    "UP007",  # keep Optional in public API signatures
+    "PIE790", # unnecessary pass in abstract stubs
+]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/*"                     = ["PLC0415", "T201", "F401", "E402"]
+"tests/*"                       = ["S101", "PLC0415"]
+"conftest.py"                   = ["PLC0415"]
+"hf_space/app.py"               = ["PLC0415"]
+
+[tool.pytest.ini_options]
+addopts = "-p no:deepeval"
+testpaths = ["tests"]
