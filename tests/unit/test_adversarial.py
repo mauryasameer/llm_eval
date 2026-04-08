@@ -1,10 +1,11 @@
 """
-tests/test_adversarial.py
--------------------------
+tests/unit/test_adversarial.py
+------------------------------
 Unit tests for the adversarial prompt safety evaluator.
 """
 import pytest
-from core.evaluators.adversarial import evaluate_safety
+
+from src.services.adversarial_service import evaluate_safety
 
 
 class TestEvaluateSafety:

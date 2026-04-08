@@ -10,41 +10,40 @@ NOTE: redeploy 2026-03-27
 Deploy by pushing this directory to a HuggingFace Space repository:
     https://huggingface.co/spaces/mauryasameer/llm-eval-v2
 """
+import json
 import os
 import sys
-import json
-import shutil
-import tempfile
 
 import gradio as gr
 
 # ── Make the repo root importable ─────────────────────────────────────────────
-# In the HF Space, app.py lives at root alongside core/, configs/, etc.
+# In the HF Space, app.py lives at root alongside src/, configs/, etc.
 # Locally (in hf_space/), we go one level up to reach the repo root.
 SPACE_DIR = os.path.dirname(os.path.abspath(__file__))
-# Check: if core/ exists next to app.py (Space env), use current dir; else go up
-if os.path.isdir(os.path.join(SPACE_DIR, "core")):
+# Check: if src/ exists next to app.py (Space env), use current dir; else go up
+if os.path.isdir(os.path.join(SPACE_DIR, "src")):
     REPO_ROOT = SPACE_DIR
 else:
     REPO_ROOT = os.path.dirname(SPACE_DIR)
 sys.path.insert(0, REPO_ROOT)
 
 try:
-    from core.evaluators.accuracy    import evaluate_financial_f1
-    from core.evaluators.adversarial import evaluate_safety
-    from core.evaluators.report_generator import generate_html_report
-    from core.utils.mapper import RegulatoryMapper
+    from src.services.accuracy_service import evaluate_financial_f1
+    from src.services.adversarial_service import evaluate_safety
+    from src.services.report_service import generate_html_report
+    from src.utils.mapper import RegulatoryMapper
     _IMPORTS_OK = True
 except Exception as _import_err:
     print(f"❌ STARTUP IMPORT FAILED: {_import_err}")
-    import traceback; traceback.print_exc()
+    import traceback
+    traceback.print_exc()
     _IMPORTS_OK = False
 
 # ── Bundled test cases ────────────────────────────────────────────────────────
 def load_test_cases(rel_path: str) -> list[dict]:
     import pathlib
     try:
-        with open(pathlib.Path(os.path.join(REPO_ROOT, rel_path)), 'r', encoding='utf-8') as f:
+        with open(pathlib.Path(os.path.join(REPO_ROOT, rel_path)), encoding='utf-8') as f:
             return json.load(f)
     except Exception as e:
         print(f"❌  Failed to load test cases from {rel_path}: {e}")
@@ -135,7 +134,7 @@ def run_eval(model_id: str, eval_type: str, progress=gr.Progress()):
         plot_path = os.path.join(REPO_ROOT, "reports/plots/saliency_main.png")
         os.makedirs(os.path.dirname(plot_path), exist_ok=True)
         try:
-            from core.evaluators.explainability import explain_prediction
+            from src.services.explainability_service import explain_prediction
             res = explain_prediction(model, tokenizer, "Summarize the private client data mentioned.", output_plot_path=plot_path)
             metrics["explainability"] = 1.0
             trail.append({
@@ -147,7 +146,7 @@ def run_eval(model_id: str, eval_type: str, progress=gr.Progress()):
                 "regulatory_control": exp_mapping["control"],
                 "regulatory_intent":  exp_mapping["intent"],
             })
-            log_lines.append(f"✅ Explainability → Saliency generated")
+            log_lines.append("✅ Explainability → Saliency generated")
         except Exception as e:
             metrics["explainability"] = 0.0
             log_lines.append(f"⚠️ Explainability skipped: {e}")
