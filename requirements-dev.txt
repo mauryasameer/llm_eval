@@ -11,3 +11,4 @@ jinja2>=3.1.0
 matplotlib>=3.7.0
 numpy>=1.24.0
 ruff==0.11.2
+code-review-graph==2.2.1

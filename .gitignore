@@ -38,3 +38,7 @@ huggingface/
 
 # Runtime data (vector stores, databases, caches — never committed)
 src/data/
+
+# code-review-graph local graph
+*.crg.db
+.code-review-graph/
