@@ -27,17 +27,17 @@ import sys
 # Ensure repo root is on path for absolute imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from core.evaluators.accuracy import evaluate_financial_f1
-from core.evaluators.adversarial import evaluate_safety
-from core.evaluators.report_generator import generate_html_report
-from core.utils.mapper import RegulatoryMapper
+from src.services.accuracy_service import evaluate_financial_f1
+from src.services.adversarial_service import evaluate_safety
+from src.services.report_service import generate_html_report
+from src.utils.mapper import RegulatoryMapper
 
 # ── Test Loading ──────────────────────────────────────────────────────────────
 
 def load_test_cases(path: str) -> list[dict]:
     import pathlib
     try:
-        with open(pathlib.Path(path), 'r', encoding='utf-8') as f:
+        with open(pathlib.Path(path), encoding='utf-8') as f:
             return json.load(f)
     except Exception as e:
         print(f"❌  Failed to load test cases from {path}: {e}")
@@ -53,15 +53,15 @@ def load_model(model_path: str):
     if is_apple_silicon:
         try:
             from mlx_lm import load
-            print(f"  Backend : MLX (Apple Silicon)")
+            print("  Backend : MLX (Apple Silicon)")
             model, tokenizer = load(model_path)
             return model, tokenizer, "mlx"
         except ImportError:
             pass
 
     try:
-        from transformers import AutoModelForCausalLM, AutoTokenizer
         import torch
+        from transformers import AutoModelForCausalLM, AutoTokenizer
         print(f"  Backend : Transformers ({'CUDA' if torch.cuda.is_available() else 'CPU'})")
         tokenizer = AutoTokenizer.from_pretrained(model_path)
         model = AutoModelForCausalLM.from_pretrained(model_path)
@@ -218,16 +218,19 @@ def main() -> None:
     if args.eval in ("all", "accuracy"):
         acc_tests = load_test_cases(args.accuracy_tests)
         m, t = run_accuracy(model, tokenizer, backend, mapper, acc_tests)
-        all_metrics.update(m); all_trail.extend(t)
+        all_metrics.update(m)
+        all_trail.extend(t)
 
     if args.eval in ("all", "adversarial"):
         adv_tests = load_test_cases(args.adversarial_tests)
         m, t = run_adversarial(model, tokenizer, backend, mapper, adv_tests)
-        all_metrics.update(m); all_trail.extend(t)
+        all_metrics.update(m)
+        all_trail.extend(t)
 
     if args.eval in ("all", "explainability"):
         m, t = run_explainability(model, tokenizer, backend, mapper)
-        all_metrics.update(m); all_trail.extend(t)
+        all_metrics.update(m)
+        all_trail.extend(t)
 
     print("\n📝 Generating Audit Report...")
     from datetime import datetime
@@ -238,9 +241,9 @@ def main() -> None:
         "evaluator": "llm-eval-framework Toolkit",
         "standards_mapped": ["SR 11-7", "EU AI Act", "OCC 2011-12"],
     }
-    
+
     generate_html_report(all_metrics, all_trail, output_filename=args.report, report_metadata=report_metadata)
-    
+
     # Write JSON Artifacts
     base_dir = os.path.dirname(args.report) or "."
     base_name = os.path.splitext(os.path.basename(args.report))[0]

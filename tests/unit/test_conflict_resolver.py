@@ -1,10 +1,10 @@
 """
-tests/test_conflict_resolver.py
---------------------------------
+tests/unit/test_conflict_resolver.py
+-------------------------------------
 Unit tests for the ConflictResolver RTM engine.
 """
-from core.utils.mapper import RegulatoryMapper
-from core.reporting.conflict_resolver import ConflictResolver
+from src.services.conflict_service import ConflictResolver
+from src.utils.mapper import RegulatoryMapper
 
 
 class TestConflictResolver:

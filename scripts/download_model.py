@@ -120,8 +120,8 @@ def download_mlx(model_id: str, use_global_cache: bool = False) -> None:
         print(f"     Saving to: models/{model_id.replace('/', '--')}/ (git-ignored)\n")
         local_path = snapshot_download(repo_id=model_id, local_dir=save_path)
 
-    print(f"\n✅  Done! Load with:")
-    print(f"    from mlx_lm import load")
+    print("\n✅  Done! Load with:")
+    print("    from mlx_lm import load")
     print(f"    model, tokenizer = load('{local_path}')")
 
 
@@ -146,8 +146,8 @@ def download_transformers(model_id: str, use_global_cache: bool = False) -> None
     AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache_dir)
 
     load_path = cache_dir if cache_dir else model_id
-    print(f"\n✅  Done! Load with:")
-    print(f"    from transformers import AutoModelForCausalLM, AutoTokenizer")
+    print("\n✅  Done! Load with:")
+    print("    from transformers import AutoModelForCausalLM, AutoTokenizer")
     print(f"    tokenizer = AutoTokenizer.from_pretrained('{load_path}')")
     print(f"    model = AutoModelForCausalLM.from_pretrained('{load_path}')")
 
