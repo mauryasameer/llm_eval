@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] - 2026-09-15
+
+### Removed
+- `CLAUDE.md` — the most visibly AI-tool-branded file remaining (root-level, named after
+  Claude). Its genuinely useful, non-tool-specific project rules (regulatory-traceability
+  requirement on evaluator changes, never committing model weights/HF cache) were folded
+  into `CONTRIBUTING.md`, which already covered the dev-branch-only PR policy.
+
+### Fixed
+- `CONTRIBUTING.md` step 3 referenced a stale `core/evaluators/` path — the real location
+  for new evaluator modules is `src/services/`.
+
 ## [0.3.1] - 2026-09-15
 
 ### Removed
