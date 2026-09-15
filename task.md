@@ -21,7 +21,11 @@ Live progress tracker — always reflects actual state of in-flight work.
 
 ---
 
+- [x] meerax ecosystem infrastructure/governance parity — Docker (`docker compose run llm-eval python main.py --model <path> --eval all`), `GOVERNANCE.md`, committed the previously-untracked cross-tool config files (`.claude/`, `.cursorrules`, `AGENTS.md`, etc.), `.gitignore` fix for `reports/*.json`, README accuracy fixes (SHAP/LIME claim, adversarial-template count, HTML/PDF overstatement, clone-dir typo, Python version). No changes to accuracy/explainability/report logic — already more sophisticated than meerax's generic equivalents, so nothing there was replaced.
+
 ## Backlog
 
 - [ ] Pin `requirements.txt` to exact versions (pip freeze)
-- [ ] Add `v0.1.0` git tag on main after alignment is merged
+- [ ] `TorchSaliencyProvider.compute()` silently falls back to `np.random.rand()` — fabricated random saliency data — on ANY exception from the real attention-extraction path, and this fallback is live in production code, not just test-guarded. A compliance-facing explainability tool that can silently hand a reviewer fake data dressed up as real output is a real integrity risk. Needs its own fix: either raise/surface the failure instead of fabricating data, or clearly flag in the report when the fallback path was used.
+- [ ] `report_metadata`'s `evaluator` and `standards_mapped` fields (populated in `main.py`) are never actually rendered anywhere in `reports/templates/report_template.html` — dead metadata. Either render them or stop populating them.
+- [ ] `transparency_score` is configured in `configs/regulatory_mapping.yaml` (with a real `conflicts_with` pairing against `pii_masking_rate`) but is never actually computed by `main.py`'s real eval flow — meaning `ConflictResolver`'s regulatory-paradox detection can currently only ever trigger in `report_service.py`'s own mock/`__main__` demo data, never in a real evaluation run.
