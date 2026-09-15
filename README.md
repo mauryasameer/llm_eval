@@ -5,7 +5,7 @@
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mauryasameer/llm_eval/blob/main/notebooks/llm_eval_demo.ipynb)
 [![HuggingFace Space](https://img.shields.io/badge/🤗%20HuggingFace-Space-blue)](https://huggingface.co/spaces/mauryasameer/llm-eval-v2)
 [![CI](https://github.com/mauryasameer/llm_eval/actions/workflows/ci.yml/badge.svg)](https://github.com/mauryasameer/llm_eval/actions)
-![Version](https://img.shields.io/badge/version-0.1.0-blue)
+![Version](https://img.shields.io/badge/version-0.3.0-blue)
 
 ---
 
