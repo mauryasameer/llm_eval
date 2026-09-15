@@ -45,9 +45,9 @@ The framework follows a modular "Auditor-in-the-Loop" design:
 2.  **The Registry:** A `YAML` source of truth mapping metrics to regulatory clauses.
 3.  **Evaluator Modules:**
     * **Accuracy:** Financial-F1 (Entity extraction integrity for tickers/amounts).
-    * **Adversarial:** 50+ Red-teaming templates (Jailbreaks/PII leaks).
-    * **Explainability:** SHAP/LIME token-level attribution.
-4.  **Reporting Engine:** Jinja2-based generator for "Committee-Ready" HTML/PDF reports.
+    * **Adversarial:** Red-teaming prompt library (jailbreaks, PII leaks) — see `data/adversarial_library/`.
+    * **Explainability:** Attention-based token saliency (direct attention-weight extraction from the final transformer layer — not SHAP/LIME).
+4.  **Reporting Engine:** Jinja2-based generator for "Committee-Ready" HTML reports.
 
 ---
 
@@ -72,7 +72,7 @@ llm-eval-framework/
 │   ├── regulatory_mapping.yaml       # Bridges Metrics -> SR 11-7 / EU AI Act
 │   └── system_prompts.yaml           # Hardened guardrails for local models
 ├── data/
-│   ├── adversarial_library/          # 50+ JSON-based jailbreak templates
+│   ├── adversarial_library/          # JSON-based jailbreak/PII red-teaming prompts
 │   └── gold_standard/                # Reference datasets for finance
 ├── hf_space/
 │   ├── app.py                        # Gradio web UI (HuggingFace Spaces)
@@ -102,7 +102,7 @@ llm-eval-framework/
 
 ### 1. Prerequisites
 
-* **Python 3.11+**
+* **Python 3.12**
 * **Hardware Acceleration (e.g., CUDA/Metal - Optional)**
 * **Any Modern IDE**
 
@@ -111,7 +111,7 @@ llm-eval-framework/
 ```bash
 # Clone the repository
 git clone https://github.com/mauryasameer/llm_eval.git
-cd llm-eval-framework
+cd llm_eval
 
 # Setup Virtual Environment
 python -m venv venv
@@ -155,7 +155,7 @@ Standard NLP metrics ignore "Precision Severity." This module extracts Tickers, 
 
 ### **2. Adversarial Tester (Red-Teaming)**
 
-A library of 50+ adversarial templates including:
+A curated red-teaming prompt library covering categories including:
 
 * **Fiduciary Bypass:** Attempts to force unauthorized investment advice.
 * **Data Leak Persona:** Trick the model into revealing mock PII.
@@ -163,7 +163,7 @@ A library of 50+ adversarial templates including:
 
 ### **3. Explainability Auditor**
 
-Generates **SHAP** plots showing which input tokens (e.g., "Interest Rate," "Default") most heavily influenced the model's decision. Required for **Interpretability** under SR 11-7 Section 3.3.
+Generates **attention-based saliency** plots showing which input tokens (e.g., "Interest Rate," "Default") the model attended to most when producing its output — computed directly from the final transformer layer's attention weights, not SHAP/LIME. Required for **Interpretability** under SR 11-7 Section 3.3.
 
 ### **4. Regulatory Mapping**
 
@@ -189,6 +189,26 @@ A professional, glass-morphic report featuring:
 | **SR 11-7** | Accuracy / Explainability | Model Soundness & Interpretability |
 | **EU AI Act** | Adversarial / Security | Robustness & Cybersecurity |
 | **OCC 2011-12** | Reporting | Audit Trail & Documentation |
+
+---
+
+## 🐳 Docker
+
+```bash
+docker compose build
+docker compose run llm-eval python main.py --model <path> --eval all
+```
+
+Targets the torch/transformers backend (mlx-lm is Apple-Silicon-only and isn't available
+inside a Linux container). `--model` is required — there's no universal default model to
+bake into the image, so plain `docker compose up` just shows usage. Mount a local
+`./models` directory (already wired in `docker-compose.yml`) to reuse a model you've
+already downloaded on the host.
+
+## ⚖️ Governance
+
+See [GOVERNANCE.md](./GOVERNANCE.md) for intended use, the explainability boundary, LLM
+controls, audit trail, and regulatory framing.
 
 ---
 
