@@ -43,3 +43,12 @@ src/data/
 # code-review-graph local graph
 *.crg.db
 .code-review-graph/
+
+# AI coding tool config — local-only, never committed to a public repo
+.claude/
+.cursorrules
+.mcp.json
+.opencode.json
+.windsurfrules
+AGENTS.md
+GEMINI.md

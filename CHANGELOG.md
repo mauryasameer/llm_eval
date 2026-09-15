@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-09-15
+
+### Removed
+- `.claude/`, `.cursorrules`, `.mcp.json`, `.opencode.json`, `.windsurfrules`, `AGENTS.md`,
+  `GEMINI.md` were committed in v0.3.0 — removed from tracking and gitignored. Regardless
+  of their content (mostly operational tooling config, not planning documents), files or
+  directories named after specific AI coding tools have no place in a public repo.
+
 ## [0.3.0] - 2026-09-15
 
 ### Added
