@@ -5,6 +5,47 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-09-15
+
+### Added
+- `Dockerfile`/`docker-compose.yml` for the evaluation CLI (`main.py`), targeting the
+  torch/transformers backend since `mlx-lm` is Apple-Silicon-only. `--model` is a required
+  CLI argument with no universal default, so the container's default command shows
+  `--help` — a real run is `docker compose run llm-eval python main.py --model <path>
+  --eval all`.
+- `GOVERNANCE.md` — intended use, explainability boundary, fairness scope, LLM controls,
+  audit trail, regulatory framing.
+- Guarded `docker compose config` validation job in CI.
+- Committed several previously-untracked, load-bearing cross-tool config files:
+  `.claude/`, `.cursorrules`, `.mcp.json`, `.opencode.json`, `.windsurfrules`, `AGENTS.md`,
+  `GEMINI.md`.
+
+### Fixed
+- README claimed the Explainability module uses SHAP/LIME — it doesn't; it computes
+  attention-based token saliency directly from the final transformer layer's attention
+  weights. Corrected in both the System Architecture and Explainability Auditor sections.
+- README overstated the adversarial test library as "50+ templates" — the test file
+  actually wired into `main.py`'s default `--adversarial-tests` path has a small, curated
+  set; a larger `jailbreaks.json` exists but isn't wired in by default.
+- README claimed "HTML/PDF" report output — `report_service.py` only generates HTML.
+- README's clone instructions had a directory-name typo (`cd llm-eval-framework` after
+  cloning into `llm_eval/`).
+- README's prerequisites listed "Python 3.11+" — the actual target is 3.12
+  (`pyproject.toml`'s `target-version`).
+- `.gitignore` was missing a rule for `reports/*.json` (generated run output), unlike the
+  adjacent `reports/*.html` and `reports/plots/*.png` rules.
+
+### Known issues (tracked in `task.md`, not fixed this release)
+- `TorchSaliencyProvider.compute()` silently fabricates random saliency data on any
+  exception from the real attention-extraction path — a real integrity risk in a
+  compliance-facing explainability tool, deliberately deferred rather than fixed
+  alongside this infrastructure work.
+- `report_metadata`'s `evaluator`/`standards_mapped` fields are populated but never
+  rendered in the report template.
+- `transparency_score` is configured with a real `conflicts_with` regulatory pairing but
+  is never computed by the live eval flow, so paradox detection can currently only trigger
+  in mock/demo data.
+
 ## [0.2.0] - 2026-04-13
 
 ### Changed
