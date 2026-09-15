@@ -1,0 +1,7 @@
+services:
+  llm-eval:
+    build: .
+    volumes:
+      - ./models:/home/app/llm_eval/models
+      - ./reports:/home/app/llm_eval/reports
+      - ./data:/home/app/llm_eval/data:ro

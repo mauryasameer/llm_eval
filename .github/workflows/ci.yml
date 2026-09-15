@@ -48,3 +48,18 @@ jobs:
 
       - name: Run ruff
         run: ruff check .
+
+  docker:
+    name: Docker (compose config)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate docker-compose.yml
+        run: |
+          if [ -f docker-compose.yml ]; then
+            docker compose config
+          else
+            echo "no docker-compose.yml in this repo, skipping"
+          fi
