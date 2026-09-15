@@ -27,12 +27,22 @@ To add a new accuracy benchmark:
 
 ### 3. Adding New Evaluator Modules
 If you are adding a completely new evaluation dimension (e.g., Bias Detection, PII Auditing):
-1. Create a new module in `core/evaluators/`.
+1. Create a new module in `src/services/`.
 2. Add the corresponding regulatory mapping in `configs/regulatory_mapping.yaml`.
 3. Integrate your evaluator in `main.py` and `hf_space/app.py`.
 4. Update the HTML report template in `reports/templates/report_template.html` if new UI elements are needed.
 
-### 4. Submitting a Pull Request
+**Changes to evaluator logic must preserve regulatory traceability** — if a metric your
+change touches is mapped in `configs/regulatory_mapping.yaml`, make sure that mapping still
+accurately reflects what the metric measures after your change.
+
+### 4. Repository Hygiene
+
+- Never commit ML model weights or HuggingFace cache files — these are gitignored
+  (`.cache/`, `models/`, `huggingface/`) for a reason; local model downloads can be tens of
+  gigabytes.
+
+### 5. Submitting a Pull Request
 
 > **Important:** Always target the `dev` branch with your PR — never `main` directly.
 > `main` is the production branch and is only updated after changes are verified on `dev`.
